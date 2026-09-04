@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "technologies",
+  "info": {
+    "singularName": "technologie",
+    "pluralName": "technologies",
+    "displayName": "Technologie",
+    "description": "Une techno / langage / outil (avec logo)"
+  },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": {},
+  "attributes": {
+    "name": { "type": "string", "required": true, "unique": true },
+    "icon": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
+    "category": {
+      "type": "enumeration",
+      "enum": ["frontend", "backend", "base_de_donnees", "outil", "methode"],
+      "default": "outil"
+    },
+    "projects": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::project.project",
+      "mappedBy": "technologies"
+    }
+  }
+}

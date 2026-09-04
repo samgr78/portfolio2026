@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "experiences",
+  "info": {
+    "singularName": "experience",
+    "pluralName": "experiences",
+    "displayName": "Expérience",
+    "description": "Stage, alternance, job, formation..."
+  },
+  "options": { "draftAndPublish": true },
+  "pluginOptions": {},
+  "attributes": {
+    "title": { "type": "string", "required": true },
+    "organisation": { "type": "string", "required": true },
+    "type": {
+      "type": "enumeration",
+      "enum": ["formation", "stage", "alternance", "interim", "projet_perso"],
+      "default": "stage"
+    },
+    "location": { "type": "string" },
+    "startDate": { "type": "date" },
+    "endDate": { "type": "date" },
+    "current": { "type": "boolean", "default": false },
+    "description": { "type": "richtext" },
+    "order": { "type": "integer", "default": 0 }
+  }
+}

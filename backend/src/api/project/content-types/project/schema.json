@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "projects",
+  "info": {
+    "singularName": "project",
+    "pluralName": "projects",
+    "displayName": "Projet",
+    "description": "Un projet à afficher dans le portfolio"
+  },
+  "options": { "draftAndPublish": true },
+  "pluginOptions": {},
+  "attributes": {
+    "title": { "type": "string", "required": true },
+    "slug": { "type": "uid", "targetField": "title", "required": true },
+    "shortDescription": { "type": "text", "maxLength": 200, "required": true },
+    "description": { "type": "richtext" },
+    "coverImage": { "type": "media", "multiple": false, "allowedTypes": ["images"] },
+    "gallery": { "type": "media", "multiple": true, "allowedTypes": ["images"] },
+    "technologies": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::technologie.technologie",
+      "inversedBy": "projects"
+    },
+    "projectUrl": { "type": "string" },
+    "githubUrl": { "type": "string" },
+    "duration": { "type": "string" },
+    "teamType": { "type": "string" },
+    "year": { "type": "integer" },
+    "featured": { "type": "boolean", "default": false },
+    "order": { "type": "integer", "default": 0 }
+  }
+}

@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Backend (Strapi)
+backend/.env
+backend/.tmp
+backend/.strapi
+backend/dist
+backend/build
+backend/public/uploads/*
+!backend/public/uploads/.gitkeep
+backend/.strapi-updater.json
+
+# Frontend (Vite)
+frontend/dist
+frontend/.env.local
+
+# OS / éditeurs
+.DS_Store
+.idea/
+*.log
