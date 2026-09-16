@@ -8,12 +8,14 @@ export default function Navbar() {
     <header className="navbar">
       <div className="container navbar-inner">
         <NavLink to="/" className="navbar-brand">
-          Samuel G-R.
+          Samuel Galliani-Royer
         </NavLink>
         <nav className="navbar-links">
           <NavLink to="/" end className={linkClass}>Accueil</NavLink>
           <NavLink to="/projets" className={linkClass}>Projets</NavLink>
-          <NavLink to="/contact" className={linkClass}>Contact</NavLink>
+          <NavLink to="/contact" className="nav-link nav-link-accent">
+            Contact
+          </NavLink>
         </nav>
       </div>
     </header>

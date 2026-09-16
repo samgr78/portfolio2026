@@ -49,4 +49,11 @@ export async function getExperiences() {
   return data.data;
 }
 
+export async function getTechnologies() {
+  const { data } = await api.get('/technologies', {
+    params: { populate: ['icon'], sort: ['name:asc'] },
+  });
+  return data.data;
+}
+
 export default api;

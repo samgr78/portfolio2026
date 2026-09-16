@@ -1,21 +1,32 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getProfil, getProjects, getExperiences, mediaUrl } from '../api/strapi';
+import { getProfil, getProjects, getExperiences, getTechnologies, mediaUrl } from '../api/strapi';
 import ProjectCard from '../components/ProjectCard';
 import Loader from '../components/Loader';
+
+const CATEGORY_LABELS = {
+  frontend: 'Front-end',
+  backend: 'Back-end',
+  base_de_donnees: 'Données',
+  outil: 'Outils',
+  methode: 'Méthodes',
+};
+const CATEGORY_ORDER = ['frontend', 'backend', 'base_de_donnees', 'outil', 'methode'];
 
 export default function Home() {
   const [profil, setProfil] = useState(null);
   const [projects, setProjects] = useState([]);
   const [experiences, setExperiences] = useState([]);
+  const [technologies, setTechnologies] = useState([]);
   const [status, setStatus] = useState('loading'); // loading | ready | empty | error
 
   useEffect(() => {
-    Promise.all([getProfil(), getProjects(), getExperiences()])
-      .then(([profilData, projectsData, experiencesData]) => {
+    Promise.all([getProfil(), getProjects(), getExperiences(), getTechnologies()])
+      .then(([profilData, projectsData, experiencesData, technologiesData]) => {
         setProfil(profilData);
         setProjects(projectsData || []);
         setExperiences(experiencesData || []);
+        setTechnologies(technologiesData || []);
         setStatus(profilData ? 'ready' : 'empty');
       })
       .catch((err) => {
@@ -46,101 +57,213 @@ export default function Home() {
 
   const photoUrl = mediaUrl(profil.photo);
   const cvUrl = mediaUrl(profil.cvFile);
-  const featured = projects.filter((p) => p.featured).slice(0, 3);
-  const toShow = featured.length > 0 ? featured : projects.slice(0, 3);
+  const featured = projects.filter((p) => p.featured).slice(0, 4);
+  const toShow = featured.length > 0 ? featured : projects.slice(0, 4);
+
+  const skillGroups = CATEGORY_ORDER
+    .map((cat) => ({
+      key: cat,
+      title: CATEGORY_LABELS[cat],
+      items: technologies.filter((t) => t.category === cat).map((t) => t.name),
+    }))
+    .filter((g) => g.items.length > 0);
+
+  const stats = [
+    { n: String(projects.length), l: projects.length > 1 ? 'projets livrés' : 'projet livré' },
+    { n: String(technologies.length), l: 'technologies maîtrisées' },
+    { n: String(experiences.length), l: experiences.length > 1 ? 'expériences' : 'expérience' },
+  ].filter((s) => s.n !== '0');
 
   return (
     <>
-      <section>
-        <div className="container" style={{ display: 'flex', gap: 40, alignItems: 'center', flexWrap: 'wrap' }}>
-          {photoUrl && (
-            <img
-              src={photoUrl}
-              alt={profil.fullName}
-              style={{ width: 160, height: 160, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--color-border)' }}
-            />
-          )}
-          <div style={{ flex: 1, minWidth: 280 }}>
+      {/* Hero */}
+      <section style={{ paddingTop: 88, paddingBottom: 72 }}>
+        <div
+          className="container"
+          style={{ display: 'grid', gridTemplateColumns: photoUrl ? '1.25fr 0.75fr' : '1fr', gap: 56, alignItems: 'end' }}
+        >
+          <div>
             {profil.availability && (
-              <span
+              <div
                 style={{
-                  display: 'inline-block',
-                  marginBottom: 12,
-                  fontSize: '0.8rem',
-                  color: '#7ee787',
-                  background: 'rgba(126,231,135,0.1)',
-                  border: '1px solid rgba(126,231,135,0.3)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 9,
+                  border: '1px solid #cfe0ff',
+                  background: '#eef4ff',
+                  color: 'var(--color-accent-hover)',
+                  padding: '7px 14px',
                   borderRadius: 999,
-                  padding: '4px 12px',
+                  fontSize: 13,
+                  marginBottom: 34,
                 }}
               >
+                <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--color-accent)', animation: 'blink 2s infinite' }} />
                 {profil.availability}
-              </span>
+              </div>
             )}
-            <h1 style={{ fontSize: '2.2rem', margin: '0 0 8px' }}>{profil.fullName}</h1>
-            <p className="muted" style={{ fontSize: '1.1rem', margin: '0 0 16px' }}>
-              {profil.jobTitle} {profil.tagline ? `— ${profil.tagline}` : ''}
-            </p>
+            <h1 style={{ fontSize: 'clamp(2.6rem, 6vw, 5.5rem)', lineHeight: 0.98, margin: '0 0 26px', letterSpacing: '-0.02em' }}>
+              {profil.jobTitle || profil.fullName}
+              {profil.tagline && (
+                <>
+                  <br />
+                  <em style={{ color: 'var(--color-accent)', fontStyle: 'italic' }}>{profil.tagline}</em>
+                </>
+              )}
+            </h1>
+            {profil.bio && (
+              <div
+                className="muted"
+                style={{ fontSize: 19, lineHeight: 1.6, maxWidth: '52ch', margin: '0 0 34px' }}
+                dangerouslySetInnerHTML={{ __html: profil.bio }}
+              />
+            )}
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <Link to="/projets" className="btn">Voir mes projets</Link>
+              <Link to="/projets" className="btn">Voir les projets</Link>
               {cvUrl && (
                 <a href={cvUrl} target="_blank" rel="noreferrer" className="btn btn-outline">
-                  Télécharger mon CV
+                  Télécharger le CV
                 </a>
               )}
-              <Link to="/contact" className="btn btn-outline">Me contacter</Link>
             </div>
           </div>
+          {photoUrl && (
+            <div style={{ animation: 'floaty 7s ease-in-out infinite' }}>
+              <img
+                src={photoUrl}
+                alt={profil.fullName}
+                style={{ width: '100%', aspectRatio: '4 / 5', objectFit: 'cover', borderRadius: 4, border: '1px solid var(--color-border)' }}
+              />
+            </div>
+          )}
         </div>
       </section>
 
-      {profil.bio && (
-        <section style={{ paddingTop: 0 }}>
-          <div className="container card" style={{ padding: 24 }}>
-            <h2 style={{ fontSize: '1.3rem' }}>À propos</h2>
-            <div style={{ color: 'var(--color-text-muted)' }} dangerouslySetInnerHTML={{ __html: profil.bio }} />
+      {/* Stats */}
+      {stats.length > 0 && (
+        <section style={{ padding: 0 }}>
+          <div className="container" style={{ display: 'flex', borderTop: '1px solid var(--color-border-soft)', borderBottom: '1px solid var(--color-border-soft)' }}>
+            {stats.map((s) => (
+              <div key={s.l} style={{ flex: 1, padding: '28px 0', borderRight: '1px solid var(--color-border-soft)' }}>
+                <div style={{ fontFamily: 'var(--font-serif)', fontSize: 40, lineHeight: 1 }}>{s.n}</div>
+                <div className="eyebrow" style={{ marginTop: 8 }}>{s.l}</div>
+              </div>
+            ))}
           </div>
         </section>
       )}
 
+      {/* À propos */}
+      {profil.bio && (
+        <section>
+          <div className="container" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 48 }}>
+            <div className="eyebrow">01 — À propos</div>
+            <div
+              style={{ maxWidth: '62ch', fontSize: 18, lineHeight: 1.6 }}
+              dangerouslySetInnerHTML={{ __html: profil.bio }}
+            />
+          </div>
+        </section>
+      )}
+
+      {/* Parcours */}
+      {experiences.length > 0 && (
+        <section style={{ paddingTop: 0 }}>
+          <div className="container" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 48 }}>
+            <div className="eyebrow">02 — Parcours</div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {experiences.map((exp, i) => (
+                <div
+                  key={exp.id}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: 8,
+                    padding: '22px 0',
+                    borderTop: i === 0 ? '1px solid var(--color-border-soft)' : 'none',
+                    borderBottom: '1px solid var(--color-border-soft)',
+                  }}
+                >
+                  <div>
+                    <div style={{ fontSize: 17, fontWeight: 600 }}>{exp.title}</div>
+                    <div className="muted" style={{ fontSize: 14, marginTop: 4 }}>{exp.organisation}</div>
+                    {exp.description && (
+                      <div
+                        className="muted"
+                        style={{ fontSize: 14, lineHeight: 1.7, marginTop: 10, maxWidth: '60ch' }}
+                        dangerouslySetInnerHTML={{ __html: exp.description }}
+                      />
+                    )}
+                  </div>
+                  <span className="eyebrow" style={{ whiteSpace: 'nowrap' }}>
+                    {exp.startDate} {exp.endDate ? `→ ${exp.endDate}` : exp.current ? "→ aujourd'hui" : ''}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Compétences */}
+      {skillGroups.length > 0 && (
+        <section style={{ paddingTop: 0 }}>
+          <div className="container" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 48 }}>
+            <div className="eyebrow">03 — Compétences</div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gap: 1,
+                background: 'var(--color-border-soft)',
+                border: '1px solid var(--color-border-soft)',
+              }}
+            >
+              {skillGroups.map((g) => (
+                <div key={g.key} style={{ background: 'var(--color-surface-alt)', padding: 24 }}>
+                  <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 10 }}>{g.title}</div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, lineHeight: 1.9, color: 'var(--color-text-faint)' }}>
+                    {g.items.join(' · ')}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Projets */}
       {toShow.length > 0 && (
         <section style={{ paddingTop: 0 }}>
           <div className="container">
-            <h2>Projets récents</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', borderBottom: '1px solid var(--color-text)', paddingBottom: 16, marginBottom: 40 }}>
+              <h2 style={{ margin: 0, fontSize: 'clamp(1.8rem, 4vw, 3rem)' }}>Projets sélectionnés</h2>
+              <span className="eyebrow">04 — Projets</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32 }}>
               {toShow.map((p) => (
                 <ProjectCard key={p.id} project={p} />
               ))}
             </div>
-            <div style={{ marginTop: 24, textAlign: 'center' }}>
+            <div style={{ marginTop: 40 }}>
               <Link to="/projets" className="btn btn-outline">Tous les projets →</Link>
             </div>
           </div>
         </section>
       )}
 
-      {experiences.length > 0 && (
+      {/* CV */}
+      {cvUrl && (
         <section style={{ paddingTop: 0 }}>
           <div className="container">
-            <h2>Parcours</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {experiences.map((exp) => (
-                <div key={exp.id} className="card" style={{ padding: 18 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-                    <strong>{exp.title} · {exp.organisation}</strong>
-                    <span className="muted" style={{ fontSize: '0.85rem' }}>
-                      {exp.startDate} {exp.endDate ? `→ ${exp.endDate}` : exp.current ? '→ aujourd\'hui' : ''}
-                    </span>
-                  </div>
-                  {exp.description && (
-                    <div
-                      className="muted"
-                      style={{ marginTop: 8, fontSize: '0.9rem' }}
-                      dangerouslySetInnerHTML={{ __html: exp.description }}
-                    />
-                  )}
-                </div>
-              ))}
+            <div style={{ border: '1px solid var(--color-border)', borderRadius: 4, padding: 40, display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 24 }}>
+              <div>
+                <div className="eyebrow" style={{ marginBottom: 18 }}>05 — CV</div>
+                <div style={{ fontFamily: 'var(--font-serif)', fontSize: 34, marginBottom: 14 }}>Curriculum vitæ</div>
+                <p className="muted" style={{ fontSize: 15, lineHeight: 1.7, margin: 0 }}>Parcours, formation et compétences détaillées en une page.</p>
+              </div>
+              <a href={cvUrl} target="_blank" rel="noreferrer" className="btn btn-accent">Télécharger le PDF</a>
             </div>
           </div>
         </section>

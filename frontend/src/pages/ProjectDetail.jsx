@@ -38,21 +38,27 @@ export default function ProjectDetail() {
   const coverUrl = mediaUrl(coverImage);
 
   return (
-    <section>
+    <section style={{ paddingTop: 72 }}>
       <div className="container" style={{ maxWidth: 800 }}>
-        <Link to="/projets" className="muted" style={{ fontSize: '0.9rem' }}>← Retour aux projets</Link>
-        <h1 style={{ marginTop: 12 }}>{title}</h1>
+        <Link to="/projets" className="eyebrow">← Retour aux projets</Link>
+        <h1 style={{ marginTop: 16, marginBottom: 12, fontSize: 'clamp(2.2rem, 5vw, 3.5rem)' }}>{title}</h1>
 
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 20 }} className="muted">
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 24 }} className="eyebrow">
           {year && <span>{year}</span>}
           {duration && <span>· {duration}</span>}
           {teamType && <span>· {teamType}</span>}
         </div>
 
-        {coverUrl && <img src={coverUrl} alt={title} style={{ width: '100%', borderRadius: 'var(--radius)', marginBottom: 24 }} />}
+        {coverUrl && (
+          <img
+            src={coverUrl}
+            alt={title}
+            style={{ width: '100%', borderRadius: 4, border: '1px solid var(--color-border)', marginBottom: 32 }}
+          />
+        )}
 
         {technologies?.length > 0 && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 32 }}>
             {technologies.map((t) => (
               <TechBadge key={t.id} tech={t} />
             ))}
@@ -60,18 +66,20 @@ export default function ProjectDetail() {
         )}
 
         {(projectUrl || githubUrl) && (
-          <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
+          <div style={{ display: 'flex', gap: 12, marginBottom: 32 }}>
             {projectUrl && <a href={projectUrl} target="_blank" rel="noreferrer" className="btn">Voir le site</a>}
             {githubUrl && <a href={githubUrl} target="_blank" rel="noreferrer" className="btn btn-outline">Voir le code</a>}
           </div>
         )}
 
-        {description && <div dangerouslySetInnerHTML={{ __html: description }} />}
+        {description && (
+          <div style={{ fontSize: 17, lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: description }} />
+        )}
 
         {gallery?.length > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12, marginTop: 32 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12, marginTop: 40 }}>
             {gallery.map((img) => (
-              <img key={img.id} src={mediaUrl(img)} alt="" style={{ borderRadius: 'var(--radius)' }} />
+              <img key={img.id} src={mediaUrl(img)} alt="" style={{ borderRadius: 4, border: '1px solid var(--color-border)' }} />
             ))}
           </div>
         )}

@@ -25,15 +25,18 @@ export default function Projects() {
   }
 
   return (
-    <section>
+    <section style={{ paddingTop: 72 }}>
       <div className="container">
-        <h2>Tous les projets</h2>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', borderBottom: '1px solid var(--color-text)', paddingBottom: 16, marginBottom: 40 }}>
+          <h2 style={{ margin: 0, fontSize: 'clamp(1.8rem, 4vw, 3rem)' }}>Tous les projets</h2>
+          <span className="eyebrow">Projets</span>
+        </div>
         {projects.length === 0 ? (
           <p className="muted">
             Aucun projet publié pour l'instant. Ajoute-en un depuis l'admin Strapi (<code>/admin</code> → Contenu → Projet).
           </p>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32 }}>
             {projects.map((p) => (
               <ProjectCard key={p.id} project={p} />
             ))}

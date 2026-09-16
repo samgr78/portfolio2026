@@ -26,38 +26,44 @@ export default function Contact() {
   const { email, phone, location, linkedinUrl, githubUrl } = profil;
 
   return (
-    <section>
+    <section style={{ paddingTop: 72 }}>
       <div className="container" style={{ maxWidth: 600 }}>
-        <h2>Me contacter</h2>
-        <div className="card" style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div className="eyebrow" style={{ marginBottom: 18 }}>Contact</div>
+        <h2 style={{ marginBottom: 32 }}>Me contacter</h2>
+        <div style={{ border: '1px solid var(--color-border)', borderRadius: 4, padding: 32, display: 'flex', flexDirection: 'column', gap: 16, background: 'var(--color-surface-alt)' }}>
           {email && (
             <div>
-              <span className="muted">Email : </span>
-              <a href={`mailto:${email}`}>{email}</a>
+              <span className="eyebrow">Email </span>
+              <br />
+              <a href={`mailto:${email}`} style={{ fontSize: 16 }}>{email}</a>
             </div>
           )}
           {phone && (
             <div>
-              <span className="muted">Téléphone : </span>
-              {phone}
+              <span className="eyebrow">Téléphone </span>
+              <br />
+              <span style={{ fontSize: 16 }}>{phone}</span>
             </div>
           )}
           {location && (
             <div>
-              <span className="muted">Localisation : </span>
-              {location}
+              <span className="eyebrow">Localisation </span>
+              <br />
+              <span style={{ fontSize: 16 }}>{location}</span>
             </div>
           )}
           {linkedinUrl && (
             <div>
-              <span className="muted">LinkedIn : </span>
-              <a href={linkedinUrl} target="_blank" rel="noreferrer">{linkedinUrl}</a>
+              <span className="eyebrow">LinkedIn </span>
+              <br />
+              <a href={linkedinUrl} target="_blank" rel="noreferrer" style={{ fontSize: 16 }}>{linkedinUrl}</a>
             </div>
           )}
           {githubUrl && (
             <div>
-              <span className="muted">GitHub : </span>
-              <a href={githubUrl} target="_blank" rel="noreferrer">{githubUrl}</a>
+              <span className="eyebrow">GitHub </span>
+              <br />
+              <a href={githubUrl} target="_blank" rel="noreferrer" style={{ fontSize: 16 }}>{githubUrl}</a>
             </div>
           )}
         </div>

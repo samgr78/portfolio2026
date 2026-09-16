@@ -9,15 +9,15 @@ export default function TechBadge({ tech }) {
         display: 'inline-flex',
         alignItems: 'center',
         gap: 6,
-        background: 'var(--color-bg-alt)',
         border: '1px solid var(--color-border)',
-        borderRadius: 999,
-        padding: '4px 10px',
-        fontSize: '0.8rem',
-        color: 'var(--color-text-muted)',
+        borderRadius: 3,
+        padding: '4px 8px',
+        fontFamily: 'var(--font-mono)',
+        fontSize: '11px',
+        color: 'var(--color-text-faint)',
       }}
     >
-      {iconUrl && <img src={iconUrl} alt={tech.name} style={{ width: 14, height: 14 }} />}
+      {iconUrl && <img src={iconUrl} alt={tech.name} style={{ width: 12, height: 12 }} />}
       {tech.name}
     </span>
   );
