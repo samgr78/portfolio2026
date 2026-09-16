@@ -53,7 +53,7 @@ export default function Footer() {
           }}
         >
           <span>© {new Date().getFullYear()} {profil?.fullName || 'Samuel Galliani-Royer'}</span>
-          {profil?.location && <span>{profil.location}</span>}
+
         </div>
       </div>
     </footer>
